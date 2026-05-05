@@ -4,6 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>back2houseradio | 24/7 Live Deep House</title>
+    <meta name="description" content="Streaming the finest deep, vocal, and classic house music 24/7. No commercials, just pure underground grooves.">
+    <meta property="og:title" content="back2houseradio | 24/7 Live Deep House">
+    <meta property="og:description" content="Streaming the finest deep, vocal, and classic house music 24/7.">
+    <meta property="og:type" content="website">
+    <meta name="theme-color" content="#050505">
     
     <!-- Favicon -->
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><circle cx=%2250%22 cy=%2250%22 r=%2250%22 fill=%22%23050505%22/><circle cx=%2250%22 cy=%2250%22 r=%2240%22 fill=%22none%22 stroke=%22%23ff3366%22 stroke-width=%228%22/><circle cx=%2250%22 cy=%2250%22 r=%2215%22 fill=%22%2300f0ff%22/><circle cx=%2250%22 cy=%2250%22 r=%223%22 fill=%22%23111111%22/></svg>">
@@ -126,19 +131,39 @@
 
     <div class="noise"></div>
 
+    <!-- NOTICE MODAL -->
+    <div id="notice-modal" class="fixed inset-0 z-[100] flex items-center justify-center p-6 hidden">
+        <div class="absolute inset-0 bg-black/80 backdrop-blur-sm"></div>
+        <div class="relative bg-brand-surface border border-brand-neon/30 p-8 md:p-12 rounded-3xl max-w-2xl w-full shadow-[0_0_50px_rgba(255,51,102,0.2)]">
+            <button id="close-modal" class="absolute top-4 right-4 text-neutral-500 hover:text-white transition-colors" aria-label="Close Notice">
+                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+            </button>
+            <div class="text-brand-neon font-black text-xs tracking-[.3em] uppercase mb-4">Urgent Update</div>
+            <h2 class="font-display font-black text-2xl md:text-3xl uppercase tracking-tighter text-white mb-6">** NOTE TO ALL LISTENERS **</h2>
+            <div class="font-sans text-neutral-300 space-y-4 leading-relaxed">
+                <p>
+                    We apologise for the intermittent issue with our main website and app. 
+                    This is due to a global issue with our hosting provider Bluehost. 
+                    Bluehoust team is working around the clock to fix the issues with their server.
+                </p>
+                <p class="font-bold text-white pt-4 tracking-wide uppercase text-sm">Back2House Radio Management</p>
+            </div>
+            <button id="modal-ack" class="mt-8 w-full py-4 bg-brand-neon text-black font-black uppercase tracking-widest hover:bg-white transition-colors rounded-xl">Understood</button>
+        </div>
+    </div>
+
     <!-- Navigation -->
     <nav class="fixed top-0 w-full z-50 bg-gradient-to-b from-black/80 to-transparent p-6 md:p-8 flex justify-between items-center mix-blend-difference">
-        <div class="font-display font-black text-2xl tracking-tighter uppercase text-white flex items-center gap-2">
-            <span class="w-2 h-2 rounded-full bg-brand-neon animate-pulse"></span>
-            back2<span class="text-brand-neon">houseradio</span>
-        </div>
+        <a href="#" class="flex items-center">
+            <img src="logo.jpg" alt="back2houseradio logo" class="h-8 md:h-10 w-auto">
+        </a>
         <div class="hidden md:flex gap-8 items-center">
             <a href="#about" class="text-xs font-bold tracking-[0.2em] uppercase text-white/70 hover:text-white transition-colors">The DJ</a>
             <a href="#shows" class="text-xs font-bold tracking-[0.2em] uppercase text-white/70 hover:text-white transition-colors">Lineup</a>
-            <a href="#" class="px-5 py-2 border border-brand-neon/50 text-brand-neon text-xs font-bold tracking-widest uppercase hover:bg-brand-neon hover:text-black transition-all rounded-full">Support</a>
+            <a href="#support" class="px-5 py-2 border border-brand-neon/50 text-brand-neon text-xs font-bold tracking-widest uppercase hover:bg-brand-neon hover:text-black transition-all rounded-full">Support</a>
         </div>
         <!-- Mobile Menu Toggle -->
-        <button id="mobile-menu-btn" class="md:hidden text-white hover:text-brand-neon transition-colors relative z-50">
+        <button id="mobile-menu-btn" aria-label="Toggle Menu" class="md:hidden text-white hover:text-brand-neon transition-colors relative z-50">
             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
         </button>
     </nav>
@@ -169,15 +194,14 @@
             </div>
             
             <h1 class="font-display font-black text-[13vw] md:text-[11vw] leading-[0.8] uppercase tracking-tighter w-full text-center mix-blend-screen g-title">
-                <span class="block text-outline">BACK2</span>
-                <span class="block text-white neon-glow">HOUSERADIO</span>
+                <img src="logo.jpg" alt="back2houseradio" class="w-[50%] md:w-[20%] max-w-4xl mx-auto h-auto">
             </h1>
             
             <p class="mt-8 font-sans text-neutral-400 font-medium tracking-wide max-w-lg mx-auto text-sm md:text-base g-fade delay-100">
                 The ultimate destination for deep, vocal, and classic house music. Broadcasting strictly underground grooves around the clock.
             </p>
             
-            <button onclick="togglePlay()" class="mt-10 w-20 h-20 bg-brand-neon border-none rounded-full flex items-center justify-center text-black hover:scale-110 hover:shadow-[0_0_40px_rgba(255,51,102,0.6)] transition-all duration-300 z-20 cursor-pointer g-fade group">
+            <button onclick="togglePlay()" aria-label="Play/Pause Stream" class="mt-10 w-20 h-20 bg-brand-neon border-none rounded-full flex items-center justify-center text-black hover:scale-110 hover:shadow-[0_0_40px_rgba(255,51,102,0.6)] transition-all duration-300 z-20 cursor-pointer g-fade group">
                 <svg id="hero-play-icon" class="w-8 h-8 ml-1" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
             </button>
         </div>
@@ -197,7 +221,7 @@
             <!-- Graphic/Image side -->
             <div class="relative w-full aspect-square md:aspect-[4/5] rounded-3xl overflow-hidden g-img-wrap group">
                 <!-- IMPORTANT: Add an image of your DJ or setup here -->
-                <img class="w-full h-full object-cover scale-110 transition-transform duration-700 group-hover:scale-100" src="https://images.unsplash.com/photo-1571266028243-cb40f5408eb5?auto=format&fit=crop&q=80&w=1000" alt="The DJ">
+                <img class="w-full h-full object-cover scale-110 transition-transform duration-700 group-hover:scale-100" src="MJ-33.webp" alt="The DJ">
                 <div class="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent opacity-80"></div>
                 <div class="absolute bottom-8 left-8">
                     <div class="font-display font-black text-4xl text-white tracking-tighter uppercase mb-1">The Architect</div>
@@ -224,82 +248,148 @@
         </div>
     </section>
 
-    <!-- UPCOMING / SCHEDULE -->
-    <section class="py-24 bg-brand-surface border-t border-white/5 relative overflow-hidden" id="shows">
-        <div class="absolute top-1/2 left-0 w-96 h-96 bg-brand-cyan/10 blur-[100px] rounded-full pointer-events-none"></div>
+    <!-- VIDEO EXPERIENCE SECTION -->
+    <section class="py-24 md:py-32 px-6 md:px-12 max-w-7xl mx-auto" id="experience">
+        <div class="text-center mb-16">
+            <h2 class="font-display font-black text-4xl md:text-7xl uppercase tracking-tighter leading-none mb-6 g-fade-up">
+                Experience <span class="text-brand-neon">The Vibe</span>
+            </h2>
+            <p class="font-sans text-neutral-400 max-w-2xl mx-auto g-fade-up">
+                Dive into the sound of back2houseradio. From intimate studio sessions to massive festival highlights, witness the energy that drives the underground.
+            </p>
+        </div>
+
+        <div class="relative w-full aspect-video rounded-3xl overflow-hidden bg-white/5 border border-white/10 shadow-2xl g-fade-up">
+            <iframe 
+                class="w-full h-full" 
+                src="https://www.youtube.com/embed/csMvT-Ps1oI?rel=0" 
+                title="back2houseradio Video" 
+                frameborder="0" 
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                allowfullscreen>
+            </iframe>
+        </div>
+    </section>
+
+    <!-- FESTIVAL SECTION -->
+    <section class="py-24 md:py-32 px-6 bg-gradient-to-b from-brand-bg to-[#0a0a0a] relative overflow-hidden" id="shows">
+        <!-- Decorative background glow -->
+        <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-brand-cyan/5 blur-[120px] rounded-full pointer-events-none"></div>
         
-        <div class="max-w-7xl mx-auto px-6 relative z-10">
-            <div class="flex flex-col md:flex-row justify-between items-end mb-16 g-fade-up">
-                <div>
-                    <h2 class="font-display font-black text-5xl md:text-7xl uppercase tracking-tighter">Programming</h2>
-                    <p class="text-brand-cyan font-bold tracking-[0.2em] uppercase text-xs mt-2">Regular Radio Slots</p>
+        <div class="max-w-7xl mx-auto relative z-10">
+            <div class="text-center mb-16">
+                <div class="inline-block px-4 py-1 rounded-full border border-brand-cyan/30 text-brand-cyan text-[10px] font-bold tracking-[0.3em] uppercase mb-6 g-fade-up">
+                    Back2House Events & Radio Presents
                 </div>
+                <h2 class="font-display font-black text-5xl md:text-8xl uppercase tracking-tighter leading-none mb-6 g-fade-up">
+                    The House <span class="text-outline">across the</span> <br>Decades Festival
+                </h2>
+                <p class="text-brand-neon font-bold tracking-[0.2em] text-lg md:text-2xl uppercase g-fade-up">
+                    Weekender 2026 • July 3rd - 5th
+                </p>
             </div>
 
-            <!-- Schedule List -->
-            <div class="border-t border-white/10 flex flex-col">
-                
-                <div class="group flex flex-col md:flex-row justify-between items-start md:items-center py-8 border-b border-white/10 hover:bg-white/5 transition-colors px-4 -mx-4 g-fade-up cursor-pointer">
-                    <div class="flex items-center gap-6 mb-4 md:mb-0">
-                        <div class="text-brand-neon font-display font-black text-2xl w-24">08:00</div>
-                        <div>
-                            <h3 class="font-display font-bold text-2xl uppercase tracking-tight text-white group-hover:text-brand-neon transition-colors">Morning Groove</h3>
-                            <p class="font-sans text-sm text-neutral-500 uppercase tracking-widest mt-1">Deep & Soulful Anthems</p>
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
+                <!-- Festival Info -->
+                <div class="lg:col-span-5 space-y-8 g-fade-up">
+                    <div class="bg-white/5 border border-white/10 p-8 rounded-3xl backdrop-blur-md">
+                        <div class="flex items-start gap-4 mb-6">
+                            <div class="w-12 h-12 rounded-2xl bg-brand-cyan/20 flex items-center justify-center shrink-0">
+                                <svg class="w-6 h-6 text-brand-cyan" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                            </div>
+                            <div>
+                                <h3 class="text-white font-bold text-xl mb-1 uppercase tracking-tight">Location</h3>
+                                <p class="text-neutral-400 font-sans">Pinewood Glamping Retreat<br>Bewdley, Worcestershire</p>
+                            </div>
                         </div>
+
+                        <p class="text-neutral-300 font-sans leading-relaxed mb-8">
+                            One of the biggest Festival Weekenders of 2026. Join us for a future history-in-the-making dance experience like no other.
+                        </p>
+
+                        <div class="space-y-3">
+                            <div class="flex justify-between items-center p-3 rounded-xl bg-black/40 border border-white/5 opacity-50">
+                                <span class="text-xs font-bold uppercase tracking-widest text-neutral-500">1st Release</span>
+                                <span class="px-2 py-1 bg-neutral-800 text-[10px] rounded font-bold uppercase text-neutral-400">Sold Out</span>
+                            </div>
+                            <div class="flex justify-between items-center p-3 rounded-xl bg-brand-neon/10 border border-brand-neon/20">
+                                <span class="text-xs font-bold uppercase tracking-widest text-white">2nd Release</span>
+                                <span class="px-2 py-1 bg-brand-neon text-[10px] rounded font-bold uppercase text-black animate-pulse">Almost Gone</span>
+                            </div>
+                        </div>
+
+                        <a href="https://www.skiddle.com/whats-on/Stourport-On-Severn/Pinewood-Retreat/BACK2HOUSE--The-House-across-the-Decades-Festival-Weekender-2026/42004280/" 
+                           target="_blank"
+                           class="mt-8 block w-full py-4 bg-white text-black text-center font-black uppercase tracking-widest hover:bg-brand-neon transition-colors rounded-xl">
+                            Secure Your Entry
+                        </a>
                     </div>
                 </div>
 
-                <div class="group flex flex-col md:flex-row justify-between items-start md:items-center py-8 border-b border-white/10 hover:bg-white/5 transition-colors px-4 -mx-4 g-fade-up cursor-pointer">
-                    <div class="flex items-center gap-6 mb-4 md:mb-0">
-                        <div class="text-brand-neon font-display font-black text-2xl w-24">18:00</div>
-                        <div>
-                            <h3 class="font-display font-bold text-2xl uppercase tracking-tight text-white group-hover:text-brand-neon transition-colors">Sunset Sessions</h3>
-                            <p class="font-sans text-sm text-neutral-500 uppercase tracking-widest mt-1">Progressive & Tech House</p>
-                        </div>
+                <!-- Lineup Grid -->
+                <div class="lg:col-span-7 grid grid-cols-1 md:grid-cols-2 gap-4 g-fade-up">
+                    <div class="md:col-span-2 p-8 bg-gradient-to-br from-brand-neon/20 to-transparent border border-brand-neon/30 rounded-3xl group hover:border-brand-neon transition-colors">
+                        <span class="text-[10px] font-bold text-brand-neon tracking-[0.4em] uppercase mb-2 block">Headlining</span>
+                        <h4 class="text-4xl md:text-5xl font-display font-black text-white uppercase tracking-tighter mb-2">Kathy Brown</h4>
+                        <p class="text-brand-neon/80 font-bold text-xs uppercase tracking-widest">The Queen of House Music • USA</p>
                     </div>
-                </div>
+                    
+                    <div class="p-6 bg-white/5 border border-white/10 rounded-3xl hover:bg-white/10 transition-colors">
+                        <h4 class="text-2xl font-display font-black text-white uppercase tracking-tighter mb-1">Mikee Freedom</h4>
+                        <p class="text-brand-cyan font-bold text-[10px] uppercase tracking-widest">Legend of the Rave & MC Heavyweight</p>
+                    </div>
 
-                <div class="group flex flex-col md:flex-row justify-between items-start md:items-center py-8 border-b border-white/10 hover:bg-white/5 transition-colors px-4 -mx-4 g-fade-up cursor-pointer">
-                    <div class="flex items-center gap-6 mb-4 md:mb-0">
-                        <div class="text-brand-neon font-display font-black text-2xl w-24">22:00</div>
-                        <div>
-                            <h3 class="font-display font-bold text-2xl uppercase tracking-tight text-white group-hover:text-brand-neon transition-colors">The Club Mix [LIVE]</h3>
-                            <p class="font-sans text-sm text-neutral-500 uppercase tracking-widest mt-1">High Energy Underground</p>
-                        </div>
+                    <div class="p-6 bg-white/5 border border-white/10 rounded-3xl hover:bg-white/10 transition-colors">
+                        <h4 class="text-2xl font-display font-black text-white uppercase tracking-tighter mb-1">Jeremy Sylvester</h4>
+                        <p class="text-brand-cyan font-bold text-[10px] uppercase tracking-widest">Garage, Jungle & House Producer Legend</p>
+                    </div>
+
+                    <div class="md:col-span-2 p-4 text-center border border-dashed border-white/10 rounded-2xl">
+                        <p class="text-neutral-500 text-[10px] font-bold uppercase tracking-[0.3em]">Full Lineup Announcement Coming Soon</p>
                     </div>
                 </div>
-                
             </div>
         </div>
     </section>
 
+   
+
     <!-- Footer -->
-    <footer class="py-12 bg-black text-center border-t border-white/5 mb-10">
-        <h2 class="font-display font-black text-3xl mb-4 tracking-tighter">BACK2<span class="text-brand-neon">HOUSERADIO</span></h2>
+    <footer class="py-12 bg-black text-center border-t border-white/5 mb-10" id="support">
+        <div class="flex justify-center mb-6">
+            <img src="logo.jpg" alt="back2houseradio" class="h-10 md:h-12 w-auto">
+        </div>
         <p class="font-sans text-neutral-500 text-xs tracking-widest uppercase mb-6">back2houseradio.com &copy; 2026</p>
         <div class="flex justify-center gap-6">
-            <a href="#" class="text-neutral-400 hover:text-white transition-colors"><svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M24 4.557c-.883.392-1.832.656-2.828.775 1.017-.609 1.798-1.574 2.165-2.724-.951.564-2.005.974-3.127 1.195-.897-.957-2.178-1.555-3.594-1.555-3.179 0-5.515 2.966-4.797 6.045-4.091-.205-7.719-2.165-10.148-5.144-1.29 2.213-.669 5.108 1.523 6.574-.806-.026-1.566-.247-2.229-.616-.054 2.281 1.581 4.415 3.949 4.89-.693.188-1.452.232-2.224.084.626 1.956 2.444 3.379 4.6 3.419-2.07 1.623-4.678 2.348-7.29 2.04 2.179 1.397 4.768 2.212 7.548 2.212 9.142 0 14.307-7.721 13.995-14.646.962-.695 1.797-1.562 2.457-2.549z"/></svg></a>
-            <a href="#" class="text-neutral-400 hover:text-white transition-colors"><svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg></a>
+            <a href="https://www.facebook.com/Back2HouseRadio" target="_blank" rel="noopener noreferrer" aria-label="Facebook" class="text-neutral-400 hover:text-white transition-colors"><svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg></a>
+            <a href="https://www.instagram.com/Back2House.Radio" target="_blank" rel="noopener noreferrer" aria-label="Instagram" class="text-neutral-400 hover:text-white transition-colors"><svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg></a>
         </div>
-    </footer>
+    </footer> 
 
     <!-- PROMINENT 24/7 AUDIO PLAYER (Fixed Bottom) -->
     <div class="fixed bottom-0 left-0 w-full z-50 glass-player border-t border-white/10 px-4 md:px-8 py-3 md:py-4 flex items-center justify-between gap-4 text-left">
         
         <!-- Audio Element -->
-        <audio id="radio-stream" preload="none" src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3"></audio>
+        <audio id="radio-stream" preload="none" src="https://back2house.radioca.st/;"></audio>
 
         <!-- Left Side: Record & Track Info -->
-        <div class="flex items-center gap-3 md:gap-4 flex-1 min-w-0">
+        <div id="player-status" class="flex items-center gap-3 md:gap-4 flex-1 min-w-0 paused">
             <div class="relative w-12 h-12 md:w-16 md:h-16 rounded-full bg-brand-bg border-2 border-brand-neon flex items-center justify-center overflow-hidden shrink-0">
                 <img id="vinyl-record" src="https://images.unsplash.com/photo-1619983081563-430f63602796?auto=format&fit=crop&q=80&w=200" alt="Vinyl" class="w-full h-full object-cover spin spin-paused">
                 <div class="absolute w-3 h-3 bg-brand-bg rounded-full border border-white/20"></div>
             </div>
             <div class="overflow-hidden whitespace-nowrap md:max-w-none">
-                <div class="font-display font-bold text-white text-[13px] md:text-base tracking-wider truncate">back2houseradio</div>
-                <div class="font-sans text-brand-cyan text-[10px] md:text-xs font-bold tracking-widest uppercase mt-0.5 md:mt-1 flex items-center gap-1.5 md:gap-2">
+                <img src="logo.jpg" alt="logo" class="h-4 md:h-5 w-auto mb-1">
+                <div class="font-sans text-brand-cyan text-[10px] md:text-xs font-bold tracking-widest uppercase mt-0.5 md:mt-1 flex items-center gap-3">
                     <span class="w-1.5 h-1.5 rounded-full bg-brand-neon animate-pulse shadow-[0_0_5px_#ff3366] shrink-0"></span>
                     <span class="truncate">Live Broadcast</span>
+                    <!-- Audio Visualizer Bars -->
+                    <div class="hidden sm:flex items-center h-4">
+                        <span class="bar"></span>
+                        <span class="bar"></span>
+                        <span class="bar"></span>
+                        <span class="bar"></span>
+                    </div>
                 </div>
             </div>
         </div>
@@ -314,7 +404,7 @@
             </div>
 
             <!-- Play Button (Always Visible) -->
-            <button onclick="togglePlay()" class="w-12 h-12 md:w-14 md:h-14 rounded-full bg-white text-black hover:bg-brand-neon hover:scale-105 transition-all flex items-center justify-center shadow-lg shrink-0 group">
+            <button onclick="togglePlay()" aria-label="Play or Pause Stream" class="w-12 h-12 md:w-14 md:h-14 rounded-full bg-white text-black hover:bg-brand-neon hover:scale-105 transition-all flex items-center justify-center shadow-lg shrink-0 group">
                 <!-- Play Icon -->
                 <svg id="play-btn-icon" class="w-5 h-5 md:w-6 md:h-6 ml-1 group-hover:text-black" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
                 <!-- Pause Icon (Hidden by default) -->
@@ -325,6 +415,37 @@
 
 
     <script>
+        /* Notice Modal Logic */
+        const modal = document.getElementById('notice-modal');
+        const closeModalBtn = document.getElementById('close-modal');
+        const modalAckBtn = document.getElementById('modal-ack');
+
+        function hideModal() {
+            gsap.to(modal, {
+                opacity: 0,
+                duration: 0.5,
+                ease: 'power2.in',
+                onComplete: () => {
+                    modal.classList.add('hidden');
+                    localStorage.setItem('b2h_notice_closed', 'true');
+                }
+            });
+        }
+
+        if (!localStorage.getItem('b2h_notice_closed')) {
+            modal.classList.remove('hidden');
+            gsap.from(modal.querySelector('.relative'), {
+                scale: 0.8,
+                opacity: 0,
+                duration: 0.6,
+                ease: 'back.out(1.7)',
+                delay: 1 // Slight delay so the user sees the hero animation first
+            });
+        }
+
+        closeModalBtn.addEventListener('click', hideModal);
+        modalAckBtn.addEventListener('click', hideModal);
+
         /* Player Logic */
         const audio = document.getElementById('radio-stream');
         const playIcon = document.getElementById('play-btn-icon');
@@ -408,11 +529,10 @@
 
         window.addEventListener('load', () => {
             // Hero Entry
-            gsap.from('.g-title span', {
-                y: 100,
+            gsap.from('.g-title img', {
+                scale: 0.9,
                 opacity: 0,
                 duration: 1.5,
-                stagger: 0.2,
                 ease: "power4.out"
             });
 
