@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>back2houseradio | 24/7 Live Deep House</title>
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><circle cx=%2250%22 cy=%2250%22 r=%2250%22 fill=%22%23050505%22/><circle cx=%2250%22 cy=%2250%22 r=%2240%22 fill=%22none%22 stroke=%22%23ff3366%22 stroke-width=%228%22/><circle cx=%2250%22 cy=%2250%22 r=%2215%22 fill=%22%2300f0ff%22/><circle cx=%2250%22 cy=%2250%22 r=%223%22 fill=%22%23111111%22/></svg>">
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800;900&family=Space+Grotesk:wght@400;600;700&display=swap" rel="stylesheet">
+    
+    <!-- GSAP for Animations -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    <!-- Lenis for smooth scrolling -->
+    <script src="https://unpkg.com/@studio-freight/lenis@1.0.34/dist/lenis.min.js"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            bg: '#050505',
+                            neon: '#ff3366', // House magenta vibe
+                            cyan: '#00f0ff',
+                            surface: '#111111'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Space Grotesk', 'sans-serif'],
+                        display: ['Outfit', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <style>
+        html, body { 
+            background-color: #050505; 
+            color: #ffffff;
+            overflow-x: hidden;
+            max-width: 100vw;
+            width: 100%;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* Glassmorphism Player */
+        .glass-player {
+            background: rgba(10, 10, 10, 0.7);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            box-shadow: 0 -10px 40px rgba(0,0,0,0.5);
+        }
+
+        .neon-glow {
+            text-shadow: 0 0 20px rgba(255, 51, 102, 0.5);
+        }
+
+        /* Audio Visualizer Bars */
+        .bar {
+            width: 4px;
+            background: #ff3366;
+            display: inline-block;
+            margin: 0 2px;
+            animation: bounce 1.2s ease infinite alternate;
+            border-radius: 4px;
+        }
+        .bar:nth-child(1) { animation-delay: 0.1s; }
+        .bar:nth-child(2) { animation-delay: 0.4s; }
+        .bar:nth-child(3) { animation-delay: 0.2s; }
+        .bar:nth-child(4) { animation-delay: 0.6s; }
+        .playing .bar { animation-play-state: running; }
+        .paused .bar { animation-play-state: paused; height: 4px !important; }
+
+        @keyframes bounce {
+            0% { height: 4px; }
+            100% { height: 24px; }
+        }
+
+        /* Vinyl Spin */
+        .spin {
+            animation: spin 4s linear infinite;
+        }
+        .spin-paused {
+            animation-play-state: paused;
+        }
+        @keyframes spin {
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #050505; }
+        ::-webkit-scrollbar-thumb { background: #333; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #ff3366; }
+        
+        ::selection { background: #ff3366; color: #fff; }
+
+        .text-outline {
+            -webkit-text-stroke: 1px rgba(255,255,255,0.2);
+            color: transparent;
+        }
+
+        /* Background Noise/Texture */
+        .noise {
+            position: fixed;
+            inset: 0;
+            z-index: 50;
+            pointer-events: none;
+            opacity: 0.03;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+        }
+    </style>
+</head>
+<body class="mb-[100px]"> <!-- Margin bottom for the fixed player -->
+
+    <div class="noise"></div>
+
+    <!-- Navigation -->
+    <nav class="fixed top-0 w-full z-50 bg-gradient-to-b from-black/80 to-transparent p-6 md:p-8 flex justify-between items-center mix-blend-difference">
+        <div class="font-display font-black text-2xl tracking-tighter uppercase text-white flex items-center gap-2">
+            <span class="w-2 h-2 rounded-full bg-brand-neon animate-pulse"></span>
+            back2<span class="text-brand-neon">houseradio</span>
+        </div>
+        <div class="hidden md:flex gap-8 items-center">
+            <a href="#about" class="text-xs font-bold tracking-[0.2em] uppercase text-white/70 hover:text-white transition-colors">The DJ</a>
+            <a href="#shows" class="text-xs font-bold tracking-[0.2em] uppercase text-white/70 hover:text-white transition-colors">Lineup</a>
+            <a href="#" class="px-5 py-2 border border-brand-neon/50 text-brand-neon text-xs font-bold tracking-widest uppercase hover:bg-brand-neon hover:text-black transition-all rounded-full">Support</a>
+        </div>
+        <!-- Mobile Menu Toggle -->
+        <button id="mobile-menu-btn" class="md:hidden text-white hover:text-brand-neon transition-colors relative z-50">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+        </button>
+    </nav>
+
+    <!-- Mobile Menu Overlay -->
+    <div id="mobile-menu" class="fixed inset-0 bg-brand-bg/95 backdrop-blur-md z-40 flex flex-col items-center justify-center gap-8 -translate-y-full transition-transform duration-500">
+        <a href="#about" class="mobile-link text-3xl font-display font-black tracking-tighter uppercase text-white hover:text-brand-neon transition-colors">The DJ</a>
+        <a href="#shows" class="mobile-link text-3xl font-display font-black tracking-tighter uppercase text-white hover:text-brand-neon transition-colors">Lineup</a>
+        <a href="#" class="mobile-link px-8 py-3 border border-brand-neon/50 text-brand-neon text-lg font-bold tracking-widest uppercase hover:bg-brand-neon hover:text-black transition-all rounded-full">Support</a>
+    </div>
+
+    <!-- IMMERSIVE HERO -->
+    <section class="relative h-[85vh] md:h-screen w-full flex items-center justify-center overflow-hidden">
+        <!-- Background Imagery -->
+        <div class="absolute inset-0 z-0">
+            <!-- IMPORTANT: Replace the Unsplash URL with an image of your DJ or Radio Studio -->
+            <img class="w-full h-full object-cover opacity-40 scale-105 g-hero-bg" src="https://images.unsplash.com/photo-1514525253161-7a46d19cd819?auto=format&fit=crop&q=80&w=2000" alt="DJ Performing">
+            <div class="absolute inset-0 bg-gradient-to-t from-brand-bg via-brand-bg/60 to-transparent"></div>
+            <!-- Neon overlay blur -->
+            <div class="absolute bottom-0 left-1/2 -translate-x-1/2 w-[80%] h-[40%] bg-brand-neon/20 blur-[120px] rounded-full pointer-events-none mix-blend-screen"></div>
+        </div>
+        
+        <!-- Hero Content -->
+        <div class="relative z-10 text-center flex flex-col items-center w-full px-4 mt-12 md:mt-0">
+            <div class="inline-flex items-center gap-3 px-4 py-1.5 rounded-full bg-white/5 border border-white/10 backdrop-blur-md mb-8 g-fade">
+                <span class="w-2 h-2 rounded-full bg-brand-neon animate-pulse"></span>
+                <span class="text-xs font-bold tracking-widest uppercase text-white">Live 24/7 Radio Stream</span>
+            </div>
+            
+            <h1 class="font-display font-black text-[13vw] md:text-[11vw] leading-[0.8] uppercase tracking-tighter w-full text-center mix-blend-screen g-title">
+                <span class="block text-outline">BACK2</span>
+                <span class="block text-white neon-glow">HOUSERADIO</span>
+            </h1>
+            
+            <p class="mt-8 font-sans text-neutral-400 font-medium tracking-wide max-w-lg mx-auto text-sm md:text-base g-fade delay-100">
+                The ultimate destination for deep, vocal, and classic house music. Broadcasting strictly underground grooves around the clock.
+            </p>
+            
+            <button onclick="togglePlay()" class="mt-10 w-20 h-20 bg-brand-neon border-none rounded-full flex items-center justify-center text-black hover:scale-110 hover:shadow-[0_0_40px_rgba(255,51,102,0.6)] transition-all duration-300 z-20 cursor-pointer g-fade group">
+                <svg id="hero-play-icon" class="w-8 h-8 ml-1" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+            </button>
+        </div>
+    </section>
+
+    <!-- ROLLING MARQUEE -->
+    <div class="py-6 bg-brand-neon text-black overflow-hidden flex whitespace-nowrap -rotate-1 scale-105 border-y-4 border-black box-border z-20 relative">
+        <div class="font-display font-black text-2xl md:text-4xl uppercase tracking-tighter g-marquee">
+            &nbsp;• 24/7 HOUSE MUSIC &nbsp;• NO COMMERCIALS &nbsp;• PURE GROOVE &nbsp;• DEEP VOCALS &nbsp;• CLASSIC ANTHEMS &nbsp;• LIVE DJ SETS &nbsp;• 24/7 HOUSE MUSIC &nbsp;• NO COMMERCIALS &nbsp;• PURE GROOVE &nbsp;• DEEP VOCALS &nbsp;• CLASSIC ANTHEMS &nbsp;• LIVE DJ SETS
+        </div>
+    </div>
+
+    <!-- THE DJ & MISSION -->
+    <section class="py-24 md:py-32 px-6 md:px-12 max-w-7xl mx-auto" id="about">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-16 items-center">
+            
+            <!-- Graphic/Image side -->
+            <div class="relative w-full aspect-square md:aspect-[4/5] rounded-3xl overflow-hidden g-img-wrap group">
+                <!-- IMPORTANT: Add an image of your DJ or setup here -->
+                <img class="w-full h-full object-cover scale-110 transition-transform duration-700 group-hover:scale-100" src="https://images.unsplash.com/photo-1571266028243-cb40f5408eb5?auto=format&fit=crop&q=80&w=1000" alt="The DJ">
+                <div class="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent opacity-80"></div>
+                <div class="absolute bottom-8 left-8">
+                    <div class="font-display font-black text-4xl text-white tracking-tighter uppercase mb-1">The Architect</div>
+                    <div class="text-brand-neon font-bold tracking-widest text-xs uppercase">Curating the Culture</div>
+                </div>
+            </div>
+
+            <!-- Content side -->
+            <div class="flex flex-col justify-center">
+                <div class="w-12 h-1 bg-brand-neon mb-8 g-fade-up"></div>
+                <h2 class="font-display font-black text-4xl md:text-6xl uppercase tracking-tighter leading-[0.9] mb-8 g-fade-up">
+                    We don't <br><span class="text-brand-cyan">play songs.</span><br>We play <br>feelings.
+                </h2>
+                <div class="space-y-6 font-sans text-neutral-400 leading-relaxed text-lg font-light g-fade-up border-l border-white/10 pl-6">
+                    <p>
+                        back2houseradio was forged out of an obsession with the true underground sound. When commercial radio traded soul for algorithms, we built a sanctuary for the rhythm.
+                    </p>
+                    <p>
+                        Our mission is simple: provide an uninterrupted, highly-curated 24/7 stream of the finest Deep, Vocal, Tech, and Classic House music. Operated by industry veterans who respect the mix.
+                    </p>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- UPCOMING / SCHEDULE -->
+    <section class="py-24 bg-brand-surface border-t border-white/5 relative overflow-hidden" id="shows">
+        <div class="absolute top-1/2 left-0 w-96 h-96 bg-brand-cyan/10 blur-[100px] rounded-full pointer-events-none"></div>
+        
+        <div class="max-w-7xl mx-auto px-6 relative z-10">
+            <div class="flex flex-col md:flex-row justify-between items-end mb-16 g-fade-up">
+                <div>
+                    <h2 class="font-display font-black text-5xl md:text-7xl uppercase tracking-tighter">Programming</h2>
+                    <p class="text-brand-cyan font-bold tracking-[0.2em] uppercase text-xs mt-2">Regular Radio Slots</p>
+                </div>
+            </div>
+
+            <!-- Schedule List -->
+            <div class="border-t border-white/10 flex flex-col">
+                
+                <div class="group flex flex-col md:flex-row justify-between items-start md:items-center py-8 border-b border-white/10 hover:bg-white/5 transition-colors px-4 -mx-4 g-fade-up cursor-pointer">
+                    <div class="flex items-center gap-6 mb-4 md:mb-0">
+                        <div class="text-brand-neon font-display font-black text-2xl w-24">08:00</div>
+                        <div>
+                            <h3 class="font-display font-bold text-2xl uppercase tracking-tight text-white group-hover:text-brand-neon transition-colors">Morning Groove</h3>
+                            <p class="font-sans text-sm text-neutral-500 uppercase tracking-widest mt-1">Deep & Soulful Anthems</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="group flex flex-col md:flex-row justify-between items-start md:items-center py-8 border-b border-white/10 hover:bg-white/5 transition-colors px-4 -mx-4 g-fade-up cursor-pointer">
+                    <div class="flex items-center gap-6 mb-4 md:mb-0">
+                        <div class="text-brand-neon font-display font-black text-2xl w-24">18:00</div>
+                        <div>
+                            <h3 class="font-display font-bold text-2xl uppercase tracking-tight text-white group-hover:text-brand-neon transition-colors">Sunset Sessions</h3>
+                            <p class="font-sans text-sm text-neutral-500 uppercase tracking-widest mt-1">Progressive & Tech House</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="group flex flex-col md:flex-row justify-between items-start md:items-center py-8 border-b border-white/10 hover:bg-white/5 transition-colors px-4 -mx-4 g-fade-up cursor-pointer">
+                    <div class="flex items-center gap-6 mb-4 md:mb-0">
+                        <div class="text-brand-neon font-display font-black text-2xl w-24">22:00</div>
+                        <div>
+                            <h3 class="font-display font-bold text-2xl uppercase tracking-tight text-white group-hover:text-brand-neon transition-colors">The Club Mix [LIVE]</h3>
+                            <p class="font-sans text-sm text-neutral-500 uppercase tracking-widest mt-1">High Energy Underground</p>
+                        </div>
+                    </div>
+                </div>
+                
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="py-12 bg-black text-center border-t border-white/5 mb-10">
+        <h2 class="font-display font-black text-3xl mb-4 tracking-tighter">BACK2<span class="text-brand-neon">HOUSERADIO</span></h2>
+        <p class="font-sans text-neutral-500 text-xs tracking-widest uppercase mb-6">back2houseradio.com &copy; 2026</p>
+        <div class="flex justify-center gap-6">
+            <a href="#" class="text-neutral-400 hover:text-white transition-colors"><svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M24 4.557c-.883.392-1.832.656-2.828.775 1.017-.609 1.798-1.574 2.165-2.724-.951.564-2.005.974-3.127 1.195-.897-.957-2.178-1.555-3.594-1.555-3.179 0-5.515 2.966-4.797 6.045-4.091-.205-7.719-2.165-10.148-5.144-1.29 2.213-.669 5.108 1.523 6.574-.806-.026-1.566-.247-2.229-.616-.054 2.281 1.581 4.415 3.949 4.89-.693.188-1.452.232-2.224.084.626 1.956 2.444 3.379 4.6 3.419-2.07 1.623-4.678 2.348-7.29 2.04 2.179 1.397 4.768 2.212 7.548 2.212 9.142 0 14.307-7.721 13.995-14.646.962-.695 1.797-1.562 2.457-2.549z"/></svg></a>
+            <a href="#" class="text-neutral-400 hover:text-white transition-colors"><svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg></a>
+        </div>
+    </footer>
+
+    <!-- PROMINENT 24/7 AUDIO PLAYER (Fixed Bottom) -->
+    <div class="fixed bottom-0 left-0 w-full z-50 glass-player border-t border-white/10 px-4 md:px-8 py-3 md:py-4 flex items-center justify-between gap-4 text-left">
+        
+        <!-- Audio Element -->
+        <audio id="radio-stream" preload="none" src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3"></audio>
+
+        <!-- Left Side: Record & Track Info -->
+        <div class="flex items-center gap-3 md:gap-4 flex-1 min-w-0">
+            <div class="relative w-12 h-12 md:w-16 md:h-16 rounded-full bg-brand-bg border-2 border-brand-neon flex items-center justify-center overflow-hidden shrink-0">
+                <img id="vinyl-record" src="https://images.unsplash.com/photo-1619983081563-430f63602796?auto=format&fit=crop&q=80&w=200" alt="Vinyl" class="w-full h-full object-cover spin spin-paused">
+                <div class="absolute w-3 h-3 bg-brand-bg rounded-full border border-white/20"></div>
+            </div>
+            <div class="overflow-hidden whitespace-nowrap md:max-w-none">
+                <div class="font-display font-bold text-white text-[13px] md:text-base tracking-wider truncate">back2houseradio</div>
+                <div class="font-sans text-brand-cyan text-[10px] md:text-xs font-bold tracking-widest uppercase mt-0.5 md:mt-1 flex items-center gap-1.5 md:gap-2">
+                    <span class="w-1.5 h-1.5 rounded-full bg-brand-neon animate-pulse shadow-[0_0_5px_#ff3366] shrink-0"></span>
+                    <span class="truncate">Live Broadcast</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Side: Controls and Visuals -->
+        <div class="flex items-center justify-end gap-5 md:gap-8">
+            
+            <!-- Volume Control (Tablet/Desktop Only) -->
+            <div class="hidden md:flex items-center gap-2">
+                <svg class="w-4 h-4 text-white/70" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5 10V14H9L14 19V5L9 10H5z"></path></svg>
+                <input type="range" id="volume-slider" min="0" max="1" step="0.05" value="0.8" class="w-20 lg:w-24 h-1 bg-white/20 rounded-lg appearance-none cursor-pointer accent-brand-neon focus:outline-none">
+            </div>
+
+            <!-- Play Button (Always Visible) -->
+            <button onclick="togglePlay()" class="w-12 h-12 md:w-14 md:h-14 rounded-full bg-white text-black hover:bg-brand-neon hover:scale-105 transition-all flex items-center justify-center shadow-lg shrink-0 group">
+                <!-- Play Icon -->
+                <svg id="play-btn-icon" class="w-5 h-5 md:w-6 md:h-6 ml-1 group-hover:text-black" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+                <!-- Pause Icon (Hidden by default) -->
+                <svg id="pause-btn-icon" class="w-5 h-5 md:w-6 md:h-6 hidden group-hover:text-black" fill="currentColor" viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
+            </button>
+        </div>
+    </div>
+
+
+    <script>
+        /* Player Logic */
+        const audio = document.getElementById('radio-stream');
+        const playIcon = document.getElementById('play-btn-icon');
+        const pauseIcon = document.getElementById('pause-btn-icon');
+        const heroPlayIcon = document.getElementById('hero-play-icon');
+        const vinyl = document.getElementById('vinyl-record');
+        const volumeSlider = document.getElementById('volume-slider');
+
+        let isPlaying = false;
+
+        function togglePlay() {
+            if (isPlaying) {
+                audio.pause();
+                playIcon.classList.remove('hidden');
+                pauseIcon.classList.add('hidden');
+                vinyl.classList.add('spin-paused');
+                // Set hero button back to play icon
+                heroPlayIcon.innerHTML = '<path d="M8 5v14l11-7z"/>';
+            } else {
+                // Ensure audio is loaded before forcing play to handle browser policies
+                audio.play().then(() => {
+                    playIcon.classList.add('hidden');
+                    pauseIcon.classList.remove('hidden');
+                    vinyl.classList.remove('spin-paused');
+                    // Set hero button to pause icon
+                    heroPlayIcon.innerHTML = '<path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/>';
+                }).catch(err => {
+                    console.error("Audio playback failed:", err);
+                    alert("Please interact with the page first to allow audio playback.");
+                });
+            }
+            isPlaying = !isPlaying;
+        }
+
+        volumeSlider.addEventListener('input', (e) => {
+            audio.volume = e.target.value;
+        });
+
+        /* Mobile Menu Logic */
+        const mobileBtn = document.getElementById('mobile-menu-btn');
+        const mobileMenu = document.getElementById('mobile-menu');
+        const mobileLinks = document.querySelectorAll('.mobile-link');
+        let menuOpen = false;
+
+        mobileBtn.addEventListener('click', () => {
+            menuOpen = !menuOpen;
+            if (menuOpen) {
+                mobileMenu.classList.remove('-translate-y-full');
+                mobileBtn.innerHTML = '<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>';
+            } else {
+                mobileMenu.classList.add('-translate-y-full');
+                mobileBtn.innerHTML = '<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>';
+            }
+        });
+
+        mobileLinks.forEach(link => {
+            link.addEventListener('click', () => {
+                menuOpen = false;
+                mobileMenu.classList.add('-translate-y-full');
+                mobileBtn.innerHTML = '<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>';
+            });
+        });
+
+
+        /* Smooth Scroll */
+        const lenis = new Lenis({
+            duration: 1.2,
+            easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+            direction: 'vertical',
+            gestureDirection: 'vertical',
+            smooth: true,
+        });
+        function raf(time) {
+            lenis.raf(time);
+            requestAnimationFrame(raf);
+        }
+        requestAnimationFrame(raf);
+
+        /* GSAP Animations */
+        gsap.registerPlugin(ScrollTrigger);
+
+        window.addEventListener('load', () => {
+            // Hero Entry
+            gsap.from('.g-title span', {
+                y: 100,
+                opacity: 0,
+                duration: 1.5,
+                stagger: 0.2,
+                ease: "power4.out"
+            });
+
+            gsap.from('.g-fade', {
+                y: 20,
+                opacity: 0,
+                duration: 1,
+                stagger: 0.1,
+                ease: "power2.out",
+                delay: 0.8
+            });
+
+            // Hero Parallax
+            gsap.to('.g-hero-bg', {
+                yPercent: 30,
+                ease: 'none',
+                scrollTrigger: {
+                    trigger: 'body',
+                    start: 'top top',
+                    end: 'bottom top',
+                    scrub: true
+                }
+            });
+
+            // Scrolling Marquee
+            gsap.to('.g-marquee', {
+                xPercent: -30,
+                ease: 'none',
+                scrollTrigger: {
+                    trigger: '.g-marquee',
+                    start: 'top bottom',
+                    end: 'bottom top',
+                    scrub: 1
+                }
+            });
+
+            // Fade Up Elements
+            document.querySelectorAll('.g-fade-up').forEach(el => {
+                gsap.from(el, {
+                    y: 40,
+                    opacity: 0,
+                    duration: 1,
+                    ease: 'power3.out',
+                    scrollTrigger: {
+                        trigger: el,
+                        start: 'top 85%',
+                        toggleActions: 'play none none reverse'
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>
