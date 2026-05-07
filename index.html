@@ -141,22 +141,24 @@
     <div class="noise"></div>
 
     <!-- NOTICE MODAL -->
-    <div id="notice-modal" class="fixed inset-0 z-[100] flex items-center justify-center p-6 hidden" role="dialog" aria-modal="true" aria-labelledby="modal-title">
-        <div class="absolute inset-0 bg-black/80 backdrop-blur-sm"></div>
-        <div class="relative bg-brand-surface border border-brand-neon/30 p-8 md:p-12 rounded-3xl max-w-2xl w-full shadow-[0_0_50px_rgba(255,51,102,0.2)]">
-            <button id="close-modal" class="absolute top-4 right-4 text-neutral-500 hover:text-white transition-colors" aria-label="Close Notice">
-                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-            </button>
-            <div class="text-brand-neon font-black text-xs tracking-[.3em] uppercase mb-4">Service Announcement</div>
-            <h2 id="modal-title" class="font-display font-black text-2xl md:text-3xl uppercase tracking-tighter text-white mb-6">Station Status Update</h2>
-            <div class="font-sans text-neutral-300 space-y-4 leading-relaxed">
-                <p>
-                    To our global listening community: We apologise for the intermittent connectivity currently affecting our primary website and mobile application. This is due to a widespread service interruption from our global hosting provider.
-                </p>
-                <p>Our technical team is working around the clock to restore full platform access as quickly as possible. In the meantime, you can continue to enjoy the signature sounds and shows of Back2House Radio right here. Thank you for your patience and support.</p>
-                <p class="font-bold text-white pt-4 tracking-wide uppercase text-sm">Back2House Radio Management</p>
+    <div id="notice-modal" class="fixed inset-0 z-[100] overflow-y-auto overflow-x-hidden hidden" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+        <div class="fixed inset-0 bg-black/80 backdrop-blur-sm"></div>
+        <div class="flex min-h-full items-start md:items-center justify-center p-4 md:p-6">
+            <div class="relative bg-brand-surface border border-brand-neon/30 p-6 md:p-12 rounded-2xl md:rounded-3xl max-w-2xl w-full shadow-[0_0_50px_rgba(255,51,102,0.2)]">
+                <button id="close-modal" class="absolute top-4 right-4 text-neutral-500 hover:text-white transition-colors" aria-label="Close Notice">
+                    <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                </button>
+                <div class="text-brand-neon font-black text-xs tracking-[.3em] uppercase mb-4">Service Announcement</div>
+                <h2 id="modal-title" class="font-display font-black text-2xl md:text-3xl uppercase tracking-tighter text-white mb-6">Station Status Update</h2>
+                <div class="font-sans text-neutral-300 space-y-4 leading-relaxed">
+                    <p>
+                        To our global listening community: We apologise for the intermittent connectivity currently affecting our primary website and mobile application. This is due to a widespread service interruption from our global hosting provider.
+                    </p>
+                    <p>Our technical team is working around the clock to restore full platform access as quickly as possible. In the meantime, you can continue to enjoy the signature sounds and shows of Back2House Radio right here. Thank you for your patience and support.</p>
+                    <p class="font-bold text-white pt-4 tracking-wide uppercase text-sm">Back2House Radio Management</p>
+                </div>
+                <button id="modal-ack" class="mt-8 w-full py-4 bg-brand-neon text-black font-black uppercase tracking-widest hover:bg-white transition-colors rounded-xl">Continue to Stream</button>
             </div>
-            <button id="modal-ack" class="mt-8 w-full py-4 bg-brand-neon text-black font-black uppercase tracking-widest hover:bg-white transition-colors rounded-xl">Continue to Stream</button>
         </div>
     </div>
 
@@ -441,19 +443,25 @@
         const modalAckBtn = document.getElementById('modal-ack');
 
         function hideModal() {
+            document.body.style.overflow = '';
+            document.body.style.height = '';
             gsap.to(modal, {
                 opacity: 0,
                 duration: 0.5,
                 ease: 'power2.in',
                 onComplete: () => {
                     modal.classList.add('hidden');
+                    modal.style.display = 'none';
                     localStorage.setItem('b2h_notice_v2', 'true');
                 }
             });
         }
 
         function showNotice() {
+            document.body.style.overflow = 'hidden';
+            document.body.style.height = '100vh';
             modal.classList.remove('hidden');
+            modal.style.display = 'block';
             gsap.set(modal, { opacity: 1 }); // Ensure visibility reset
             gsap.from(modal.querySelector('.relative'), {
                 scale: 0.8,
